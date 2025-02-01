@@ -1,7 +1,7 @@
 import { Chain } from "./Chain";
 import { Interceptor } from "./Interceptor";
 
-export class FetchClient {
+export class FetchChainClient {
   private baseURL: string;
   private interceptors: Interceptor[];
 

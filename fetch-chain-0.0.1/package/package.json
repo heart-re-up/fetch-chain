@@ -2,7 +2,6 @@
 	"name": "fetch-chain",
 	"version": "0.0.1",
 	"description": "A fetch client with interceptors",
-	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"files": [
@@ -18,22 +17,9 @@
 		"lint": "eslint src --ext .ts",
 		"format": "prettier --write \"src/**/*.ts\""
 	},
-	"keywords": [
-		"fetch",
-		"interceptor",
-		"http",
-		"typescript"
-	],
-	"author": "heart-re-up",
+	"keywords": [],
+	"author": "",
 	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/heart-re-up/fetch-chain.git"
-	},
-	"homepage": "https://github.com/heart-re-up/fetch-chain#readme",
-	"bugs": {
-		"url": "https://github.com/heart-re-up/fetch-chain/issues"
-	},
 	"devDependencies": {
 		"@types/jest": "^29.5.14",
 		"@typescript-eslint/eslint-plugin": "^8.22.0",

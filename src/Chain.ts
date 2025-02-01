@@ -22,7 +22,7 @@ export class Chain {
     return this._request;
   }
 
-  requestInit(): RequestInit | undefined {
+  init(): RequestInit | undefined {
     return this._init;
   }
 
@@ -38,6 +38,6 @@ export class Chain {
     // 다음 인터셉터 호출
     const next = new Chain(this.interceptors, this.index + 1, request, init);
     const interceptor = this.interceptors[this.index];
-    return interceptor.intercept(next);
+    return interceptor(next);
   }
 }

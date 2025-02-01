@@ -1,5 +1,3 @@
 import { Chain } from "./Chain";
 
-export interface Interceptor {
-  intercept(chain: Chain): Promise<Response>;
-}
+export type Interceptor = (chain: Chain) => Promise<Response>;

@@ -1,11 +1,5 @@
 # fetch-chain
 
-[![npm version](https://img.shields.io/npm/v/fetch-chain.svg)](https://www.npmjs.com/package/fetch-chain)
-[![License](https://img.shields.io/npm/l/fetch-chain.svg)](https://github.com/yourusername/fetch-chain/blob/main/LICENSE)
-[![npm downloads](https://img.shields.io/npm/dm/fetch-chain.svg)](https://www.npmjs.com/package/fetch-chain)
-
-<!-- [![Build Status](https://github.com/yourusername/fetch-chain/actions/workflows/test.yml/badge.svg)](https://github.com/yourusername/fetch-chain/actions) -->
-
 `fetch-chain`은 인터셉터를 지원하는 HTTP 클라이언트 라이브러리입니다.
 실제 호출은 브라우저 또는 `node18` 이상의 `fetch` API를 사용합니다.
 
@@ -20,8 +14,6 @@
 ```bash
 npm install fetch-chain
 ```
-
-> **Note**: `fetch-chain`은 ESM(ECMAScript Modules) 전용 라이브러리입니다. CommonJS (`require`)는 지원하지 않습니다.
 
 ## FetchChainClient 기본 사용법
 

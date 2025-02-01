@@ -1,13 +1,13 @@
-import { FetchClient } from "../FetchClient";
+import { FetchChainClient } from "../FetchChainClient";
 import { Chain } from "../Chain";
 import { Interceptor } from "../Interceptor";
 // import { fail } from "assert";
 
-describe("FetchClient", () => {
-  let client: FetchClient;
+describe("FetchChainClient", () => {
+  let client: FetchChainClient;
 
   beforeEach(() => {
-    client = new FetchClient("https://httpbin.org");
+    client = new FetchChainClient("https://httpbin.org");
   });
 
   describe("HTTP 메소드", () => {
@@ -249,23 +249,21 @@ describe("FetchClient", () => {
   });
 
   it("should work with interceptors", async () => {
-    const mockInterceptor: Interceptor = {
-      intercept: async (chain: Chain) => {
-        const request = chain.request();
-        const init = chain.requestInit() || {};
+    const mockInterceptor = async (chain: Chain) => {
+      const request = chain.request();
+      const init = chain.init() || {};
 
-        // 헤더 추가
-        const newInit = {
-          ...init,
-          headers: {
-            ...init.headers,
-            "X-Test-Header": "test-value",
-          },
-        };
+      // 헤더 추가
+      const newInit = {
+        ...init,
+        headers: {
+          ...init.headers,
+          "X-Test-Header": "test-value",
+        },
+      };
 
-        const response = await chain.proceed(request, newInit);
-        return response;
-      },
+      const response = await chain.proceed(request, newInit);
+      return response;
     };
 
     client.addInterceptor(mockInterceptor);
@@ -273,5 +271,55 @@ describe("FetchClient", () => {
     const data = await response.json();
 
     expect(data.headers["X-Test-Header"]).toBe("test-value");
+  });
+
+  describe("인터셉터", () => {
+    it("요청/응답 본문 로깅 인터셉터", async () => {
+      const logs: string[] = [];
+      const loggingInterceptor = async (chain: Chain) => {
+        const request = chain.request();
+        const init = chain.init() || {};
+
+        // 요청 본문 로깅
+        if (init.body) {
+          const bodyText =
+            init.body instanceof FormData
+              ? "<<FormData>>"
+              : init.body instanceof URLSearchParams
+                ? init.body.toString()
+                : typeof init.body === "string"
+                  ? init.body
+                  : JSON.stringify(init.body);
+          logs.push(bodyText);
+        }
+
+        const response = await chain.proceed(request, init);
+
+        // 응답 본문 로깅 (clone 사용)
+        const clonedResponse = response.clone();
+        const responseText = await clonedResponse.text();
+        logs.push(responseText); // 전체 응답을 로깅
+
+        return response;
+      };
+
+      client.addInterceptor(loggingInterceptor);
+
+      const testData = { message: "테스트 메시지" };
+      const response = await client.fetch("/post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(testData),
+      });
+
+      expect(response.status).toBe(200);
+      expect(logs.length).toBe(2);
+
+      // 응답 로그를 파싱하여 검증
+      expect(JSON.parse(logs[0])).toEqual(testData);
+      expect(JSON.parse(logs[1]).json).toEqual(testData);
+    });
   });
 });

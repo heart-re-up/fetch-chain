@@ -21,8 +21,6 @@
 npm install fetch-chain
 ```
 
-> **Note**: `fetch-chain`은 ESM(ECMAScript Modules) 전용 라이브러리입니다. CommonJS (`require`)는 지원하지 않습니다.
-
 # 기본 사용법
 
 특정 원격 서버에 대한 요청을 처리하는 클라이언트를 생성합니다.
@@ -91,7 +89,7 @@ const client = buildClient()
 FetchChainClient는 baseURL과 요청 경로를 자동으로 결합합니다:
 
 ```typescript
-const client = new FetchChainClient("https://api.example.com");
+const client = buildClient().baseURL("https://api.example.com").build();
 
 // https://api.example.com/users 로 요청됨
 await client.fetch("/users");

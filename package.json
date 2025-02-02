@@ -17,9 +17,9 @@
 		"dist"
 	],
 	"scripts": {
-		"test": "jest",
-		"test:watch": "jest --watch",
-		"test:coverage": "jest --coverage",
+		"test": "vitest",
+		"test:watch": "vitest --watch",
+		"test:coverage": "vitest --coverage",
 		"dev": "ts-node src/index.ts",
 		"build": "rimraf dist && tsup src/index.ts --format cjs,esm --dts --clean",
 		"prepare": "pnpm build",
@@ -43,16 +43,15 @@
 		"url": "https://github.com/heart-re-up/fetch-chain/issues"
 	},
 	"devDependencies": {
-		"@types/jest": "^29.5.14",
 		"@typescript-eslint/eslint-plugin": "^8.22.0",
 		"@typescript-eslint/parser": "^8.22.0",
+		"@vitest/coverage-v8": "^3.0.4",
 		"eslint": "^9.19.0",
-		"jest": "^29.7.0",
 		"prettier": "^3.4.2",
 		"rimraf": "^6.0.1",
-		"ts-jest": "^29.2.5",
 		"ts-node": "^10.9.2",
 		"tsup": "^8.3.6",
-		"typescript": "^5.7.3"
+		"typescript": "^5.7.3",
+		"vitest": "^3.0.4"
 	}
 }

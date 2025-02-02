@@ -1,19 +1,15 @@
-import { FetchChainClient } from "../FetchChainClient";
-import { Chain } from "../Chain";
-import { Interceptor } from "../Interceptor";
+import { FetchChainClient } from "./FetchChainClient";
+import { Chain } from "./Chain";
+import { buildClient } from "./buildClient";
+import { Interceptor } from "./Interceptor";
 // import { fail } from "assert";
 
 describe("FetchChainClient", () => {
-  let client: FetchChainClient;
-
-  beforeEach(() => {
-    client = new FetchChainClient("https://httpbin.org");
-  });
-
   describe("HTTP 메소드", () => {
     const testData = { name: "홍길동", age: 30 };
 
     it("GET 요청", async () => {
+      const client = buildClient().baseURL("https://httpbin.org").build();
       const response = await client.fetch("/get");
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -21,6 +17,7 @@ describe("FetchChainClient", () => {
     });
 
     it("POST 요청", async () => {
+      const client = buildClient().baseURL("https://httpbin.org").build();
       const response = await client.fetch("/post", {
         method: "POST",
         headers: {
@@ -34,6 +31,7 @@ describe("FetchChainClient", () => {
     });
 
     it("PUT 요청", async () => {
+      const client = buildClient().baseURL("https://httpbin.org").build();
       const response = await client.fetch("/put", {
         method: "PUT",
         headers: {
@@ -47,6 +45,7 @@ describe("FetchChainClient", () => {
     });
 
     it("PATCH 요청", async () => {
+      const client = buildClient().baseURL("https://httpbin.org").build();
       const response = await client.fetch("/patch", {
         method: "PATCH",
         headers: {
@@ -60,6 +59,7 @@ describe("FetchChainClient", () => {
     });
 
     it("DELETE 요청", async () => {
+      const client = buildClient().baseURL("https://httpbin.org").build();
       const response = await client.fetch("/delete", {
         method: "DELETE",
       });
@@ -69,6 +69,7 @@ describe("FetchChainClient", () => {
     });
 
     it("HEAD 요청", async () => {
+      const client = buildClient().baseURL("https://httpbin.org").build();
       const response = await client.fetch("/get", {
         method: "HEAD",
       });
@@ -80,6 +81,7 @@ describe("FetchChainClient", () => {
     });
 
     it("OPTIONS 요청", async () => {
+      const client = buildClient().baseURL("https://httpbin.org").build();
       const response = await client.fetch("/get", {
         method: "OPTIONS",
       });
@@ -90,6 +92,7 @@ describe("FetchChainClient", () => {
 
   describe("GET 요청", () => {
     it("기본 GET 요청", async () => {
+      const client = buildClient().baseURL("https://httpbin.org").build();
       const response = await client.fetch("/get");
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -97,6 +100,7 @@ describe("FetchChainClient", () => {
     });
 
     it("쿼리 파라미터가 있는 GET 요청", async () => {
+      const client = buildClient().baseURL("https://httpbin.org").build();
       const response = await client.fetch("/get?param1=value1&param2=value2");
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -107,6 +111,7 @@ describe("FetchChainClient", () => {
     });
 
     it("한글 쿼리 파라미터 처리", async () => {
+      const client = buildClient().baseURL("https://httpbin.org").build();
       const response = await client.fetch("/get?name=홍길동&city=서울");
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -119,6 +124,7 @@ describe("FetchChainClient", () => {
 
   describe("POST 요청", () => {
     it("JSON 데이터로 POST 요청", async () => {
+      const client = buildClient().baseURL("https://httpbin.org").build();
       const testData = { name: "홍길동", age: 30 };
       const response = await client.fetch("/post", {
         method: "POST",
@@ -134,6 +140,7 @@ describe("FetchChainClient", () => {
     });
 
     it("Form 데이터로 POST 요청", async () => {
+      const client = buildClient().baseURL("https://httpbin.org").build();
       const formData = new FormData();
       formData.append("name", "홍길동");
       formData.append("age", "30");
@@ -152,6 +159,7 @@ describe("FetchChainClient", () => {
     });
 
     it("URLEncoded 데이터로 POST 요청", async () => {
+      const client = buildClient().baseURL("https://httpbin.org").build();
       const params = new URLSearchParams();
       params.append("name", "홍길동");
       params.append("age", "30");
@@ -173,6 +181,7 @@ describe("FetchChainClient", () => {
     });
 
     it("멀티파트 파일 업로드", async () => {
+      const client = buildClient().baseURL("https://httpbin.org").build();
       const formData = new FormData();
       const fileContent = new Blob(["테스트 파일 내용"], {
         type: "text/plain",
@@ -192,6 +201,7 @@ describe("FetchChainClient", () => {
     });
 
     it("바이너리 데이터 전송", async () => {
+      const client = buildClient().baseURL("https://httpbin.org").build();
       const textData = "테스트데이터";
       const encoder = new TextEncoder();
       const binaryArray = encoder.encode(textData);
@@ -218,6 +228,7 @@ describe("FetchChainClient", () => {
 
   describe("에러 처리", () => {
     it("404 에러 처리", async () => {
+      const client = buildClient().baseURL("https://httpbin.org").build();
       try {
         await client.fetch("/status/404");
         throw new Error("에러가 발생해야 합니다");
@@ -232,6 +243,7 @@ describe("FetchChainClient", () => {
     });
 
     it("네트워크 타임아웃", async () => {
+      const client = buildClient().baseURL("https://httpbin.org").build();
       try {
         await client.fetch("/delay/5", {
           signal: AbortSignal.timeout(1000), // 1초 후 타임아웃
@@ -266,7 +278,10 @@ describe("FetchChainClient", () => {
       return response;
     };
 
-    client.addInterceptor(mockInterceptor);
+    const client = buildClient()
+      .baseURL("https://httpbin.org")
+      .addInterceptor(mockInterceptor)
+      .build();
     const response = await client.fetch("/headers");
     const data = await response.json();
 
@@ -303,7 +318,10 @@ describe("FetchChainClient", () => {
         return response;
       };
 
-      client.addInterceptor(loggingInterceptor);
+      const client = buildClient()
+        .baseURL("https://httpbin.org")
+        .addInterceptor(loggingInterceptor)
+        .build();
 
       const testData = { message: "테스트 메시지" };
       const response = await client.fetch("/post", {

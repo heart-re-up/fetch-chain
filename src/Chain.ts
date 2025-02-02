@@ -1,21 +1,34 @@
+import { Executor } from "./Executor";
 import { Interceptor } from "./Interceptor";
 
 export class Chain {
-  private readonly interceptors: Interceptor[];
   private readonly index: number; // chain index
+  private readonly interceptors: Interceptor[];
+  private readonly executor: Executor;
   private readonly _request: RequestInfo | URL;
   private readonly _init?: RequestInit;
 
-  constructor(
+  static firstChain(
     interceptors: Interceptor[],
-    index: number,
+    executor: Executor,
     request: RequestInfo | URL,
-    _init?: RequestInit
+    init?: RequestInit
   ) {
-    this._request = request;
-    this._init = _init ?? {};
-    this.interceptors = interceptors;
+    return new Chain(0, interceptors, executor, request, init);
+  }
+
+  constructor(
+    index: number,
+    interceptors: Interceptor[],
+    executor: Executor,
+    request: RequestInfo | URL,
+    init?: RequestInit
+  ) {
     this.index = index;
+    this.interceptors = interceptors;
+    this.executor = executor;
+    this._request = request;
+    this._init = init;
   }
 
   request(): RequestInfo | URL {
@@ -30,14 +43,24 @@ export class Chain {
     request: RequestInfo | URL,
     init?: RequestInit
   ): Promise<Response> {
-    // 마지막 인터셉터까지 도달했다면 실제 fetch 실행
-    if (this.index >= this.interceptors.length) {
-      return fetch(request, init);
+    // 호출 가능한 인터셉터가 남았다면 다음 인터셉터 호출
+    if (this.index < this.interceptors.length) {
+      const interceptor = this.interceptors[this.index];
+      const nextChain = this.nextChain(request, init);
+      return interceptor(nextChain);
     }
 
-    // 다음 인터셉터 호출
-    const next = new Chain(this.interceptors, this.index + 1, request, init);
-    const interceptor = this.interceptors[this.index];
-    return interceptor(next);
+    // 마지막 인터셉터까지 도달했다면 실제 요청 실행
+    return this.executor(request, init);
+  }
+
+  private nextChain(request: RequestInfo | URL, init?: RequestInit) {
+    return new Chain(
+      this.index + 1,
+      this.interceptors,
+      this.executor,
+      request,
+      init
+    );
   }
 }

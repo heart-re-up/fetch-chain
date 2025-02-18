@@ -1,9 +1,10 @@
 import { Chain } from "./Chain";
 import { Executor } from "./Executor";
 import { Interceptor } from "./Interceptor";
+import { toStringBaseURL } from "./util";
 
 export class FetchChainClient {
-  private readonly baseURL?: URL;
+  private readonly baseURL?: string;
   private readonly interceptors: Interceptor[];
   private readonly executor: Executor;
 
@@ -19,54 +20,43 @@ export class FetchChainClient {
   constructor(
     baseURL?: URL | string,
     interceptors?: Interceptor[],
-    executor?: Executor
+    executor?: Executor,
   ) {
-    if (baseURL === undefined || baseURL === null) {
-      this.baseURL = undefined;
-    } else if (typeof baseURL === "string") {
-      if (baseURL.endsWith("/")) {
-        throw new Error("baseURL must not end with a slash");
-      }
-      this.baseURL = new URL(baseURL);
-    } else {
-      if (baseURL.href.endsWith("/")) {
-        throw new Error("baseURL must not end with a slash");
-      }
-      this.baseURL = baseURL;
-    }
+    this.baseURL = toStringBaseURL(baseURL);
     this.interceptors = interceptors ?? [];
     this.executor = executor ?? fetch;
   }
 
   private resolveUrl(request: RequestInfo | URL): RequestInfo | URL {
-    if (request instanceof URL) {
+    if (typeof request === "object") {
       return request;
     }
 
-    if (typeof request === "string") {
-      // if request has http or https, return it as is
-      if (request.startsWith("http://") || request.startsWith("https://")) {
-        return request;
-      }
-
-      // combine baseURL and request path
-      const normalizedPath = request.startsWith("/") ? request : `/${request}`;
-      return new URL(normalizedPath, this.baseURL);
+    // if request has http or https, return it as is
+    if (request.startsWith("http://") || request.startsWith("https://")) {
+      return request;
     }
 
+    // combine baseURL and request path if baseURL has been set
+    if (this.baseURL) {
+      const normalizedPath = request.startsWith("/") ? request : `/${request}`;
+      return this.baseURL + normalizedPath;
+    }
+
+    // if baseURL has not been set, return request as is
     return request;
   }
 
   async fetch(
     request: RequestInfo | URL,
-    init?: RequestInit
+    init?: RequestInit,
   ): Promise<Response> {
     const resolvedRequest = this.resolveUrl(request);
     const chain = Chain.firstChain(
       this.interceptors,
       this.executor,
       resolvedRequest,
-      init
+      init,
     );
     return chain.proceed(resolvedRequest, init);
   }

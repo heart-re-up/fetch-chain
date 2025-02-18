@@ -12,28 +12,29 @@ class FetchChainClientBuilder {
     this._executor = fetch;
   }
 
-  baseURL(baseURL: URL | string) {
+  baseURL(baseURL: URL | string): FetchChainClientBuilder {
     this._baseURL = baseURL;
     return this;
   }
 
-  addInterceptor(interceptor: Interceptor) {
+  addInterceptor(interceptor: Interceptor): FetchChainClientBuilder {
     this._interceptors.push(interceptor);
     return this;
   }
 
-  executor(executor: Executor) {
+  executor(executor: Executor): FetchChainClientBuilder {
     this._executor = executor;
     return this;
   }
 
-  build() {
+  build(): FetchChainClient {
     return new FetchChainClient(
       this._baseURL,
       this._interceptors,
-      this._executor
+      this._executor,
     );
   }
 }
 
-export const buildClient = () => new FetchChainClientBuilder();
+export const buildClient = (): FetchChainClientBuilder =>
+  new FetchChainClientBuilder();

@@ -12,8 +12,8 @@ export class Chain {
     interceptors: Interceptor[],
     executor: Executor,
     request: RequestInfo | URL,
-    init?: RequestInit
-  ) {
+    init?: RequestInit,
+  ): Chain {
     return new Chain(0, interceptors, executor, request, init);
   }
 
@@ -22,7 +22,7 @@ export class Chain {
     interceptors: Interceptor[],
     executor: Executor,
     request: RequestInfo | URL,
-    init?: RequestInit
+    init?: RequestInit,
   ) {
     this.index = index;
     this.interceptors = interceptors;
@@ -41,7 +41,7 @@ export class Chain {
 
   async proceed(
     request: RequestInfo | URL,
-    init?: RequestInit
+    init?: RequestInit,
   ): Promise<Response> {
     // 호출 가능한 인터셉터가 남았다면 다음 인터셉터 호출
     if (this.index < this.interceptors.length) {
@@ -54,13 +54,13 @@ export class Chain {
     return this.executor(request, init);
   }
 
-  private nextChain(request: RequestInfo | URL, init?: RequestInit) {
+  private nextChain(request: RequestInfo | URL, init?: RequestInit): Chain {
     return new Chain(
       this.index + 1,
       this.interceptors,
       this.executor,
       request,
-      init
+      init,
     );
   }
 }

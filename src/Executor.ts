@@ -1,4 +1,4 @@
 export type Executor = (
   request: RequestInfo | URL,
-  init?: RequestInit
+  init?: RequestInit,
 ) => Promise<Response>;

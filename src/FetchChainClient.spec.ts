@@ -1,7 +1,6 @@
-import { FetchChainClient } from "./FetchChainClient";
-import { Chain } from "./Chain";
+import { describe, expect, it } from "vitest";
 import { buildClient } from "./buildClient";
-import { Interceptor } from "./Interceptor";
+import { Chain } from "./Chain";
 // import { fail } from "assert";
 
 describe("FetchChainClient", () => {
@@ -261,7 +260,7 @@ describe("FetchChainClient", () => {
   });
 
   it("should work with interceptors", async () => {
-    const mockInterceptor = async (chain: Chain) => {
+    const mockInterceptor = async (chain: Chain): Promise<Response> => {
       const request = chain.request();
       const init = chain.init() || {};
 
@@ -291,7 +290,7 @@ describe("FetchChainClient", () => {
   describe("인터셉터", () => {
     it("요청/응답 본문 로깅 인터셉터", async () => {
       const logs: string[] = [];
-      const loggingInterceptor = async (chain: Chain) => {
+      const loggingInterceptor = async (chain: Chain): Promise<Response> => {
         const request = chain.request();
         const init = chain.init() || {};
 

@@ -1,6 +1,6 @@
 {
 	"name": "fetch-chain",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"description": "A fetch client with interceptors",
 	"type": "module",
 	"main": "dist/index.cjs",

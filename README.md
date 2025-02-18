@@ -27,9 +27,14 @@ npm install fetch-chain
 
 `baseURL` 을 지정해서 요청을 보낼 서버를 지정합니다.
 
+`baseURL` 을 지정하지 않으면 브라우저는 현재 페이지를 기준으로 동작합니다.
+
 ```typescript
 // 생성
 const client = buildClient().baseURL("https://api.example.com").build();
+
+// 컨텍스트 경로로만 생성하면 항상 현재 페이지 origin 을 기준으로 요청을 보냅니다.
+const client = buildClient().baseURL("/api").build();
 
 // GET 요청
 const response = await client.fetch("/users");

@@ -47,10 +47,10 @@ export class FetchChainClient {
     return request;
   }
 
-  async fetch(
+  fetch = async (
     request: RequestInfo | URL,
     init?: RequestInit,
-  ): Promise<Response> {
+  ): Promise<Response> => {
     const resolvedRequest = this.resolveUrl(request);
     const chain = Chain.firstChain(
       this.interceptors,
@@ -59,5 +59,5 @@ export class FetchChainClient {
       init,
     );
     return chain.proceed(resolvedRequest, init);
-  }
+  };
 }

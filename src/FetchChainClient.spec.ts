@@ -339,4 +339,54 @@ describe("FetchChainClient", () => {
       expect(JSON.parse(logs[1]).json).toEqual(testData);
     });
   });
+
+  describe("fetch 함수 분리 사용", () => {
+    it("fetch 함수를 변수에 할당하여 사용", async () => {
+      const client = buildClient().baseURL("https://httpbin.org").build();
+      const fetchFn = client.fetch;
+
+      const response = await fetchFn("/get");
+      expect(response.status).toBe(200);
+      const data = await response.json();
+      expect(data.url).toBe("https://httpbin.org/get");
+    });
+
+    it("fetch 함수를 다른 컨텍스트에서 사용", async () => {
+      const client = buildClient().baseURL("https://httpbin.org").build();
+      const fetchFn = client.fetch.bind(client); // 바인딩 필요
+
+      const response = await fetchFn("/get");
+      expect(response.status).toBe(200);
+      const data = await response.json();
+      expect(data.url).toBe("https://httpbin.org/get");
+    });
+
+    it("fetch 함수를 객체 메서드로 전달", async () => {
+      const client = buildClient().baseURL("https://httpbin.org").build();
+      const requester = {
+        doFetch: client.fetch.bind(client),
+      };
+
+      const response = await requester.doFetch("/get");
+      expect(response.status).toBe(200);
+      const data = await response.json();
+      expect(data.url).toBe("https://httpbin.org/get");
+    });
+
+    it("fetch 함수를 콜백으로 전달", async () => {
+      const client = buildClient().baseURL("https://httpbin.org").build();
+
+      // 콜백을 받아 실행하는 함수
+      const executeCallback = async (
+        callback: typeof client.fetch,
+      ): Promise<Response> => {
+        return await callback("/get");
+      };
+
+      const response = await executeCallback(client.fetch.bind(client));
+      expect(response.status).toBe(200);
+      const data = await response.json();
+      expect(data.url).toBe("https://httpbin.org/get");
+    });
+  });
 });

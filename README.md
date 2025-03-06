@@ -1,5 +1,6 @@
 # fetch-chain
 
+![GitHub top language](https://img.shields.io/github/languages/top/heart-re-up/fetch-chain)
 [![npm version](https://img.shields.io/npm/v/fetch-chain.svg)](https://www.npmjs.com/package/fetch-chain)
 [![License](https://img.shields.io/npm/l/fetch-chain.svg)](https://github.com/yourusername/fetch-chain/blob/main/LICENSE)
 [![npm downloads](https://img.shields.io/npm/dm/fetch-chain.svg)](https://www.npmjs.com/package/fetch-chain)
